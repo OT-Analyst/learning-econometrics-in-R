@@ -1,7 +1,36 @@
-# Learning Econometrics with R
+# Learning Econometrics in R
 
-The purpose of this rmarkdown file is to record my learning and objective outcomes in the world of econometrics. As a economics major, it is important of importance that I ensure that not only is the theoretical side is covered and understood but also the data and numerical side. Marrying the two disciplines will make more easy and practical for me to truly see the truth behind causal relationships between economic variables. Remember, while economic theory points to the direction of a causal relationship (if income rise we may expect consumption to rise), but theory rarely express the exact magnitude. However, econometrics gives a much clearer idea of magnitude of an effect, which may be extremely important in policy or business context.
+This repository documents my journey of learning and applying econometrics using R. As an economics major, it’s important for me to understand not only the theoretical foundations of economic relationships, but also the data‑driven, numerical tools that allow us to measure them. Econometrics is where these two worlds meet.
 
-This is the beginning of a long journey into understand the art and science of causality in the economic world.This is going to be a challenging but exciting journey. Stay tuned.
+Economic theory can point us toward the direction of a causal relationship for example, higher income may lead to higher consumption but, theory rarely tells us the magnitude of the effect. Econometrics fills that gap. It provides the statistical tools to quantify relationships, test hypotheses, and evaluate the strength of evidence in real‑world data. This is essential for policy analysis, business decisions, and understanding how the world actually works.
 
-***Please note:*** All practical examples and assignments/exercises are from 'Real Econometrics: The right tools to Answer important questions (Second Edition) by Michael A.Bailey'.I will cover parts of the book that i deem important. I may not follow the book chronologically, so chapters may not align but the main aim is that it is the main book of reference being used on this journey of learning.  
+This project marks the beginning of a long, challenging, and exciting journey into the art and science of causal inference in economics.  
+
+## Primary Learning Resource
+
+The practical examples, exercise, and applied work in this repository are based on: 
+
+*Real Econometrics: The Right Tools to Answer Important Questions (2nd Edition)*
+
+I will focus on the chapters and concepts I find most important. I may not follow the book in strict order, but it will remain my main reference throughout this learning process.
+
+## Repository Structure
+
+The repo is structured as follows:
+
+``` 
+01-good-data-practices/
+   ├── summary.Rmd
+   └── exercise.Rmd
+02-quest-for-causality/
+   ├── summary.Rmd
+   └── exercise.Rmd 
+... 
+```
+
+Each chapter has its own folder, and inside each chapter folder you will find:
+
+- **summary.Rmd** → recreated tables, notes, explanations  
+- **exercise.Rmd** → applied problems, regressions, and hands‑on work  
+
+This structure keeps theory and application cleanly separated while I progress through the discipline.
