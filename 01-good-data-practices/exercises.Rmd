@@ -1,0 +1,108 @@
+---
+title: "Good Data Practices - Exercise"
+author: "OT"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+## Loading packages and libraries
+
+```{r results='hide', warning=FALSE, message=FALSE}
+
+# Loading required packages and libraries.
+
+# packages:
+#install.packages('DT')
+#install.packages("ggrepel")
+#install.packages("rstatix")
+
+
+
+# libraries:
+library(tidyverse)
+library(ggthemes)
+library(ggrepel)
+library(DT)
+library(broom)
+library(gt)
+library(rstatix)
+
+```
+
+## data summary table:
+
+Below is a description of the variables(i.e) in the Winter Olympics data. This info is sourced from the text book directly.A good description of a data fields (variables) makes it easy for respective users to quickly understand the meaning of data especially when sourced from third parities. It does not require us to guess what each variable represent and potential incorrectly describe data variables.
+```{r summary}
+
+variable_info <- tribble(
+  ~variable,   ~description,
+  "id",         "Unique number for each country in the data set",
+  "country",    "Name of country",
+  "year",       "Year",
+  "medals",     "Total number of combined medals won",
+  "athlete",    "Number of athlete in Olympic delegation",
+  "GDP",        "Groos domestic product of country (per capita GDP in $10,000 U.S. dollars)",
+  "temp",       "Average high temperature (in Fahrenheit) in January if country is in Northern Hemisphere or July if in Southern Hemisphere (for largest city)",
+  "population", "Population of country(in 100,000)",
+  "host",       "Equals 1 if host nation and 0 otherwise"
+)
+
+variable_info %>%
+  gt() %>%
+  tab_header(
+    title = md("**Table 1.3 Varibles for Winter Olympics Questions**")
+  ) %>%
+  tab_options(
+    heading.border.bottom.style = "hidden",
+    column_labels.border.bottom.color = "black",
+    table_body.border.bottom.style = "hidden"
+  ) %>%
+  cols_label(
+    variable = md("**Variable name**"),
+    description = md("**Description**")
+  ) %>%
+  cols_align(
+    columns = everything(),
+    align = "left"
+  ) %>%
+  tab_style(
+    style = cell_borders(
+      sides = "bottom",
+      style = "hidden"
+    ),
+    locations = cells_body()
+  )
+  
+
+```
+
+## Data loading
+
+
+
+
+### Summarise the medals, athletes, and GDP data.
+### List the first five observations for the country, year, medals, athletes, and GDP data.
+### How many observations are there for each year?
+### Produce a scattperplot of medals and the number of athletes. Describe the relationship depicted.
+### Explain any suspicion you might have that other factors could explain the observed relationship between the number of athletes and medals.
+### Create a scatterplot of medals and GDP. Briefly describe any clear patterns.
+### Create a scatterplot of medals and population. Briefly decribe any clear patterns.
+### Create a scatterplot of medals and temperature. Briefly describe any clear patterns.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

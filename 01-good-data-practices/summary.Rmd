@@ -1,0 +1,219 @@
+---
+title: "Good Data Practices"
+author: "OT"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+## Summary
+
+Econometrics relies heavily on the availability and proper treatment of data, as most economic data is observational rather than experimental, requiring researchers to thoroughly understand the nature and structure of the data. Its easy to overlook data gathering and organization as cumbersome, but its super important.
+
+Econometrics has four primary data structures:
+
+ - **Cross-Sectional Data:**
+ - **Time Series Data:**
+ - **Pooled Data:**
+ - **Panel(Longitudinal) Data:**
+ 
+ Lets start off by creating a synthetic data to help drive home the point here. This is to help understand the meaning and purpose of observed data. The data is for the possible effects on weight for eating donuts per week by observing the residents of Springfield.
+
+To begin, lets start by loading of all the necessary packages for the purpose of achieving, creating data, shaping the data and later on creating the graphs and data outputs for econometrics purposes.
+
+```{r results='hide', warning=FALSE, message=FALSE}
+
+# Loading required packages and libraries.
+
+# packages:
+#install.packages('DT')
+#install.packages("ggrepel")
+#install.packages("rstatix")
+
+
+
+# libraries:
+library(tidyverse)
+library(ggthemes)
+library(ggrepel)
+library(DT)
+library(broom)
+library(gt)
+library(rstatix)
+
+```
+
+Generate data points and placing it in a data structure in R. In this case this is a tibble. 
+
+```{r tibble}
+
+# Number of data points / observations - integer vector
+observation_number <- c(1:13) # tells R to create a sequence from 1 to 13
+
+# Name of each individual - character vector
+name <- c("Homer", "Marge", "Lisa", "Bart", "Comic Book Guy", "Mr. Buns",
+          "Smithers", "Chief Wiggum", "Principle Skinner", "Rev. Lovejoy",
+          "Ned Flanders", "Patty", "Selma")
+
+# Number of donuts eaten in a week - numeric vector
+donuts_per_wk <- c(14, 0, 0, 5, 20, 0.75, 0.25, 16, 3, 2, 0.8, 5, 4)
+
+# Weight of each individual(lbs) - numeric vector
+weight <- c(275, 141, 70, 75, 310, 80, 160, 263, 205, 185, 170, 155, 145)
+
+# creating a donuts tibble:
+donuts <- tibble(observation_number, name, donuts_per_wk, weight)
+
+# display the tibble:
+donuts
+
+```
+
+Sometime displaying the entire tibble or dataframe is not convenient like in the previous code chunck.This is due to the number of observation. While this tibble is relatively small not all will be. In the spirit of the exercise i will still use a built-in method/function that previews the data without seeing all observations in the tibble.
+
+```{r data snapshot }
+
+glimpse(donuts) # preview of data
+
+```
+
+Lets place the above tibble in a table format for a much cleaner look using the **datatable()** function from DT package.
+
+```{r data table}
+
+# creating interactive table
+donuts %>%
+datatable(caption = 'Table 1.1 Donut Consumption and Weight')
+```
+
+### Know your data
+
+Ideally the data generated earlier is created in optimal conditions and thats not how the world really works. In the real world data can truly be messy. Observational data is sometimes even messier. That is why its important to know your data as far as data analysis goes. Sounds simple and oblivious step but some fail to follow it. 
+
+As a initial inspection, check each variables sample size, mean, standard deviation, min or max values to potentially identify missing data or anomalies. This is simply defined as summary statistics. Statistical techniques used to understand your data.
+
+Lets try to display the previously created data in a summary statistic table for observational ease. To assist with displaying the data in a neat and tidy table, get_summary_stats() function which will provide the necessary statistics together with gt()function which will place this in a presentable table. Pipe operators which is a powerful to that will allow for the get_summary_stats() function to be pushed onto the gt() function.   
+
+```{r summary statistics table}
+
+donuts %>%
+  get_summary_stats(
+    weight, donuts_per_wk,
+    show = c("mean", "sd", "min", "max" )) %>%
+  gt() %>%
+  tab_header(
+    title = md("**Table 1.1 Descriptive Statistics for Donut and Weight Data**")
+  ) %>%
+  tab_options(
+    heading.border.bottom.style = "hidden",
+    column_labels.border.bottom.color = "black",
+    table_body.border.bottom.style = "hidden"
+  ) %>%
+  cols_label(
+    variable = md("**Variable**"),
+    n = md("**Observations<br>(<i>N</i>)**"),
+    mean = md("**Mean**"),
+    sd = md("**Standard<br>deviation**"),
+    min = md("**Minimum**"),
+    max = md("**Maximum**")
+  ) %>%
+  cols_align(
+    columns = everything(),
+    align = "center"
+  ) %>%
+  tab_style(
+    style = cell_borders(
+      sides = "bottom",
+      style = "hidden"
+    ),
+    locations = cells_body()
+  )
+
+```
+
+Summary statistics provide foundational insight into the shape and characteristics of a dataset’s distribution.
+
+Measures of central tendency, such as the mean, median, and mode, help identify where data points tend to cluster. They can also signal the presence of skewness or outliers that distort the average.
+
+Measures of dispersion, including standard deviation, variance, and interquartile range, reveal how spread out the data is, offering clues about its consistency and reliability.
+
+Individually, each measure offers a partial view. However, when interpreted together, they form a more complete picture of the data’s structure, highlighting whether the distribution is symmetric or skewed, tightly clustered or widely spread. This holistic understanding is essential for making informed decisions in both exploratory and predictive contexts, as will be demonstrated later
+
+Frequency tables are also useful summary statistics for categorical data to sniff out any errors. For example: Gender classification of residents of Springfield is not explicitly clear. That mend and ensure no error exist. 
+
+Lets remind ourselves of the names and make use of it to map the correct gender classification to each observation:
+
+```{r residents}
+donuts$name
+```
+adding of the gender column, classified as factor data type. This means, 1 = male and 0 = female. 
+```{r mapping}
+# adding the gender column:
+donuts$gender <- c(1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0)
+
+# convert column to factor data type:
+donuts <- donuts %>%
+  mutate(gender = as.factor(gender))
+
+# check structure of updated column:
+donuts %>%
+  select(gender) %>%
+  str()
+```
+The conversion was successful, as the column structure shows gender is a factor data type with 2 levels being "0" = female and "1" = male. The reason for the 2 and 1 is R's internal integer code as R uses 1-based indexing. Hence, 
+
+- level "0" -> internal code 1
+- level "1" -> internal code 2
+
+But when you display the actual data points in the column they are just as we hard coded them.
+
+```{r}
+donuts$gender
+```
+
+Why store the gender values as binary values and not character strings? Factors carry categorical meaning and offer several advantages such as:
+
+- More efficient for statistical analysis
+- Memory-efficient (avoids repeated string storage)
+- Better compatibility with grouping and summarisation functions
+- Improved behavior in visualizations and modeling
+
+This is particularly beneficial when dealing with regression modeling as it gives clean dummy variables for regression, correct baseline category, readable labels for summaries, no surprises with factor coding. This is exactly a professional econometric structure for your data. This becomes much more clear later.
+
+Lets construct the frequency table given the addition of the gender column.
+
+```{r frequency table}
+
+donuts %>%
+  count(gender) %>%
+  gt() %>%
+  tab_header(
+    title = md("**Table 1.2 Frequency Table for Gender Variable in Donut Datset**")
+  )%>%
+  tab_options(
+    heading.border.bottom.style = "hidden",
+    column_labels.border.bottom.color = "black",
+    table_body.border.bottom.style = "hidden"
+  ) %>%
+  cols_label(
+    gender = md("**Gender**"),
+    n = md("**Observations**")
+  ) %>%
+  cols_align(
+    columns = everything(),
+    align = "center"
+  ) %>%
+  tab_style(
+    style = cell_borders(
+      sides = "bottom",
+      style = "hidden"
+    ),
+    locations = cells_body()
+  )
+ 
+```
+
+Table 2.2 reveal the distribution of binary or nominal categories. This helps identify class imbalance, dominance of certain groups, and potential encoding issues. While the discipline of econometrics mostly focuses on continuous variables, we briefly inspect the categorical structure to confirm data integrity and prepare for comparative analysis.
+
+Remember, summarising data is useful as it allows us to see relationships and identify unusual observations should they exist. Quantifying relationships comes later but seeing them ourselves is a good first step.
+
+
